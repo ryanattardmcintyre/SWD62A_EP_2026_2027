@@ -14,7 +14,7 @@ namespace Common.Models
         public int Id { get; set; }
 
         [ForeignKey("Book")] //name of the property of the data type
-        public int BookFK { get; set; }
+        public string BookFK { get; set; }
         public Book Book { get; set; }
 
         public DateTime DateTaken { get; set; }
