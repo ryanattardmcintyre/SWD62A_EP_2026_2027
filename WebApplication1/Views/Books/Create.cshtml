@@ -1,0 +1,113 @@
+﻿@model Common.Models.Book
+
+@{
+    ViewData["Title"] = "Create Book";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <h2 class="mb-4">Add New Book</h2>
+
+            <form action="/Book/Create" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <!-- ISBN -->
+                <div class="mb-3">
+                    <label 
+                           class="form-label">ISBN</label>
+
+                    <input asp-for="Isbn"
+                           class="form-control"
+                           placeholder="000-0-00-000000-0"
+                           maxlength="17" />
+
+                    <span asp-validation-for="Isbn"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Title -->
+                <div class="mb-3">
+                    <label asp-for="Title"
+                           class="form-label"></label>
+
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="Enter book title" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Published Year -->
+                <div class="mb-3">
+                    <label asp-for="PublishedYear"
+                           class="form-label">Published Year</label>
+
+                    <input asp-for="PublishedYear"
+                           type="number"
+                           class="form-control"
+                           placeholder="e.g. 2024"
+                           min="1450"
+                           max="2100" />
+
+                    <span asp-validation-for="PublishedYear"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Author -->
+                <div class="mb-3">
+                    <label asp-for="Author"
+                           class="form-label"></label>
+
+                    <input asp-for="Author"
+                           class="form-control"
+                           placeholder="Enter author name (optional)" />
+
+                    <span asp-validation-for="Author"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Category -->
+                <div class="mb-3">
+                    <label asp-for="CategoryFK"
+                           class="form-label">Category</label>
+
+                    <input type="number" name="CategoryFK" />
+
+                    <span asp-validation-for="CategoryFK"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Available -->
+                <div class="form-check mb-4">
+                    <input asp-for="Available"
+                           class="form-check-input" />
+
+                    <label asp-for="Available"
+                           class="form-check-label">
+                        Available for borrowing
+                    </label>
+                </div>
+
+                <!-- Buttons -->
+                <button type="submit" class="btn btn-primary">
+                    Create Book
+                </button>
+
+                <a action="/Books/Index"
+                   class="btn btn-secondary">
+                    Back to List
+                </a>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
