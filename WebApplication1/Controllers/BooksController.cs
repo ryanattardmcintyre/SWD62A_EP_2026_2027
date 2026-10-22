@@ -7,9 +7,12 @@ namespace WebApplication1.Controllers
     public class BooksController : Controller
     {
         private BooksRepository _booksRepository;
-        public BooksController(BooksRepository booksRepository) 
-        { 
-                _booksRepository = booksRepository;
+        private CategoriesRepository _categoriesRepository;
+        public BooksController(BooksRepository booksRepository,
+                CategoriesRepository categoriesRepository)
+        {
+            _booksRepository = booksRepository;
+            _categoriesRepository = categoriesRepository;
         }
 
         //step 1: user types in the url to add a book, clicks ENTER and a request is forwarded to our Controller
@@ -21,6 +24,8 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Categories = _categoriesRepository.GetCategories();
+
             return View();
         }
 
@@ -29,15 +34,26 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                _booksRepository.AddBook(b);
-                //ViewBag or TempData
-                TempData["message"] = "Book added successfully";
+                var count = _booksRepository.GetBooks().Where(x => x.Isbn == b.Isbn).Count();
+                if (count == 0)
+                { 
+                     _booksRepository.AddBook(b);
+                    //ViewBag or TempData
+                    TempData["message"] = "Book added successfully";
+                }
+                else
+                {
+                    TempData["error"] = "Book already exists";
+                }
+                    
             }
             catch (Exception ex)
             {
                 //log ex into a file or cloud
                 TempData["error"] = "Book was not added. Check your inputs";
             }
+
+            ViewBag.Categories = _categoriesRepository.GetCategories();
             return View(); //redirecting the user back to the page where he came from
 
         }

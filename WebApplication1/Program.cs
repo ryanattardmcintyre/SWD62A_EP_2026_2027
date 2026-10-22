@@ -17,11 +17,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 
-//Transient -
-//Singleton -
-//Scoped (most commonly used) - 
+//Transient - it creates an instance for every call
+//Singleton - it creates ONE instance for all users/calls/requests
+//Scoped (most commonly used) - it creates ONE instance for every request
+                            //e.g. end-user => /Books/Create => 1) checks whether book exists 2) adds the book
 builder.Services.AddScoped<BooksRepository>();
-
+builder.Services.AddScoped<CategoriesRepository>();
 
 var app = builder.Build();
 
