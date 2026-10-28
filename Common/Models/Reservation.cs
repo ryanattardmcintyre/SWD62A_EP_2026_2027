@@ -15,7 +15,7 @@ namespace Common.Models
 
         [ForeignKey("Book")] //name of the property of the data type
         public string BookFK { get; set; }
-        public Book Book { get; set; }
+        public virtual Book Book { get; set; }
 
         public DateTime DateTaken { get; set; }
         public DateTime? DateReturned { get; set; }

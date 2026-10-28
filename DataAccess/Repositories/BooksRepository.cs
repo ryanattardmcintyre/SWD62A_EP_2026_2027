@@ -3,6 +3,7 @@ using DataAccess.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +45,10 @@ namespace DataAccess.Repositories
         public IQueryable<Book> GetBooks()
         {
             return _context.Books; //it will fetch the entire Books table
+
+          /*  var list = from b in _context.Books
+                       select new BookViewModel {Title=b.Title, Description=b.Description }
+          */
         }
         //IQueryable => IEnumerable => IList => List => SortedList => OrderedListed
         public IQueryable<Book> GetBooks(string keyword)
@@ -63,6 +68,13 @@ namespace DataAccess.Repositories
         {
             return GetBooks(keyword).Skip(startAt).Take(pageSize);
         }
+
+        public Book? GetBook(string isbn)
+        {
+            //3838-233333 => 3838 23333
+            return GetBooks().SingleOrDefault(x => x.Isbn == isbn); 
+        }
+
 
         //Create
         public void AddBook(Book b)

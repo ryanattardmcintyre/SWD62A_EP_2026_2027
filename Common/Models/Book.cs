@@ -26,7 +26,7 @@ namespace Common.Models
         public int CategoryFK { get; set; }
         
         //navigational property
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
 
         //from b in context.Books
         //select b.Isbn, b.Title, b.Category.Name

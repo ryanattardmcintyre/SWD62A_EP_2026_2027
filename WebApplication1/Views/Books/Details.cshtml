@@ -1,0 +1,294 @@
+﻿@model Common.Models.Book
+
+@{
+    ViewData["Title"] = Model.Title;
+
+    var initials = string.Join("",
+        Model.Title.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Take(2)
+            .Select(w => w[0].ToString().ToUpper()));
+
+    var categoryName = Model.Category?.Name ?? "Uncategorised";
+}
+
+<style>
+    .book-details {
+        --ink: #18243b;
+        --accent: #e9a23b;
+        color: var(--ink);
+    }
+
+    .book-hero {
+        background: #f4f0e9;
+        border-radius: 28px;
+        overflow: hidden;
+    }
+
+    .book-art {
+        min-height: 480px;
+        background: radial-gradient( circle at 30% 20%, #526b83, #18283d 75% );
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 55px;
+    }
+
+    .book-cover {
+        width: 240px;
+        min-height: 340px;
+        background: linear-gradient( 135deg, #e5a544, #bc642e );
+        box-shadow: -12px 14px 0 #101b2a, 20px 25px 45px rgba(0,0,0,.35);
+        transform: rotate(-7deg);
+        border-radius: 3px 12px 12px 3px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform .3s ease;
+    }
+
+        .book-cover:hover {
+            transform: rotate(0deg) scale(1.04);
+        }
+
+    .cover-initials {
+        font-size: 75px;
+        font-weight: 900;
+        line-height: 1;
+        color: #fff4dc;
+    }
+
+    .cover-title {
+        color: white;
+        font-size: 22px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .book-info {
+        padding: 55px 45px;
+    }
+
+    .book-heading {
+        font-size: clamp(36px, 4vw, 60px);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -2px;
+    }
+
+    .book-author {
+        font-size: 20px;
+        color: #687386;
+    }
+
+    .category-pill {
+        display: inline-block;
+        background: #e2e7ec;
+        border-radius: 50px;
+        padding: 8px 17px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .availability {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 700;
+    }
+
+    .availability-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .details-panel {
+        background: #18243b;
+        color: white;
+        border-radius: 24px;
+        padding: 35px;
+        margin-top: 30px;
+    }
+
+    .detail-label {
+        font-size: 12px;
+        color: #a8b5c9;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+    }
+
+    .detail-value {
+        font-size: 19px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .back-link {
+        text-decoration: none;
+        color: #59667a;
+        font-weight: 600;
+    }
+
+    .action-btn {
+        border-radius: 12px;
+        padding: 13px 25px;
+        font-weight: 700;
+    }
+
+    @@media(max-width: 768px) {
+        .book-art {
+            min-height: 360px;
+        }
+
+        .book-info {
+            padding: 35px 25px;
+        }
+
+        .book-cover {
+            transform: rotate(-4deg) scale(.85);
+        }
+    }
+</style>
+
+<div class="container py-5 book-details">
+
+    <!-- Navigation -->
+    <div class="mb-4">
+        <a asp-action="Index" class="back-link">
+            &larr; Back to Library
+        </a>
+    </div>
+
+    <div class="book-hero">
+        <div class="row g-0">
+
+            <!-- Artistic Book Cover -->
+            <div class="col-lg-5">
+                <div class="book-art">
+                    <div class="book-cover">
+                        <div class="cover-initials">
+                            @initials
+                        </div>
+
+                        <div class="cover-title">
+                            @Model.Title
+                        </div>
+
+                        <small class="text-white">
+                            @(Model.Author ?? "Unknown Author")
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Information -->
+            <div class="col-lg-7">
+                <div class="book-info">
+
+                    <span class="category-pill mb-4">
+                        @categoryName
+                    </span>
+
+                    <h1 class="book-heading mb-4">
+                        @Model.Title
+                    </h1>
+
+                    <p class="book-author mb-4">
+                        Written by
+                        <strong>
+                            @(Model.Author ?? "Unknown Author")
+                        </strong>
+                    </p>
+
+                    <div class="mb-4">
+                        @if (Model.Available)
+                        {
+                            <span class="availability text-success">
+                                <span class="availability-dot"></span>
+                                Available in Library
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="availability text-danger">
+                                <span class="availability-dot"></span>
+                                Currently Unavailable
+                            </span>
+                        }
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <p class="text-muted">
+                        Explore the details of this title from
+                        our digital library collection.
+                        Discover its publication information
+                        and current availability.
+                    </p>
+
+                    <!-- Actions -->
+                    <div class="d-flex flex-wrap gap-3 mt-5">
+                        <a asp-action="Edit"
+                           asp-route-id="@Model.Isbn"
+                           class="btn btn-dark action-btn">
+                            Edit Book
+                        </a>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-dark action-btn">
+                            Browse Collection
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metadata Panel -->
+    <div class="details-panel">
+
+        <div class="d-flex align-items-center mb-4">
+            <span class="text-uppercase fw-bold"
+                  style="letter-spacing:2px">
+                Inside the Book
+            </span>
+            <div class="flex-grow-1 ms-4"
+                 style="height:1px;background:#43516a">
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="detail-label">ISBN Identifier</div>
+                <div class="detail-value">@Model.Isbn</div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="detail-label">Publication Year</div>
+                <div class="detail-value">
+                    @Model.PublishedYear
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="detail-label">Literary Category</div>
+                <div class="detail-value">
+                    @categoryName
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="text-center mt-5 text-muted small">
+        LIBRARY COLLECTION &bull; BOOK DETAILS
+    </div>
+
+</div>

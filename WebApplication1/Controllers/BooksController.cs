@@ -15,6 +15,43 @@ namespace WebApplication1.Controllers
             _categoriesRepository = categoriesRepository;
         }
 
+        public IActionResult Index()
+        {
+            var list =_booksRepository.GetBooks();
+            list = list.OrderBy(b => b.Title);
+
+            return View(list); //passing an object/list of objects to a page
+                               //passing a Model of type List<Book> to the page
+
+        }
+
+        
+        public IActionResult Search(string keyword)
+        {
+            var list = _booksRepository.GetBooks(keyword);
+            list = list.OrderBy(b => b.Title);
+
+
+            return View("Index", list);
+        }
+
+        public IActionResult Details(string id)
+        {
+            var book = _booksRepository.GetBook(id);
+            if (book == null)
+            {
+                TempData["error"] = "No books found";
+                return RedirectToAction("Index"); //we are redirecting the user to the Index method!!
+              
+            }
+            else
+            {
+                return View(book);
+            }
+
+        }
+
+
         //step 1: user types in the url to add a book, clicks ENTER and a request is forwarded to our Controller
         //     GET:     /Books/Create
         //step 2: page is returned back to the user with empty text fields
@@ -38,6 +75,7 @@ namespace WebApplication1.Controllers
                 if (count == 0)
                 { 
                      _booksRepository.AddBook(b);
+                    ModelState.Clear();
                     //ViewBag or TempData
                     TempData["message"] = "Book added successfully";
                 }

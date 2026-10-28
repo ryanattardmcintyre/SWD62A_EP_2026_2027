@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Common.Models.Book>
+
+@{
+    ViewData["Title"] = "Books Catalogue";
+}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Books Catalogue</h2>
+            <p class="text-muted">
+                Browse our collection of books
+            </p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary">
+            + Add New Book
+        </a>
+    </div>
+
+    <!-- Search -->
+    <div class="mb-4">
+     
+        <form action="/Books/Search" method="post">
+            <input type="text"
+                   id="bookSearch"
+                   class="form-control"
+                   placeholder="Search books by title, author or ISBN..."
+                   name="keyword" />
+                    <input type="submit" class="btn btn-success" value="Search" />
+
+        </form>
+    </div>
+
+    <!-- Book Cards -->
+    <div class="row g-4" id="booksContainer">
+
+        @foreach (var book in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4 book-card">
+
+                <div class="card h-100 shadow-sm border-0">
+
+                    <div class="card-body d-flex flex-column">
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="badge bg-secondary">
+                                @(book.Category?.Name ?? "Uncategorised")
+                            </span>
+
+                            @if (book.Available)
+                            {
+                                <span class="badge bg-success">
+                                    Available
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">
+                                    Unavailable
+                                </span>
+                            }
+                        </div>
+
+                        <h5 class="card-title fw-bold">
+                            @book.Title
+                        </h5>
+
+                        <p class="text-muted mb-2">
+                            By @(book.Author ?? "Unknown Author")
+                        </p>
+
+                        <hr />
+
+                        <p class="mb-2">
+                            <strong>ISBN:</strong> @book.Isbn
+                        </p>
+
+                        <p class="mb-2">
+                            <strong>Published:</strong> @book.PublishedYear
+                        </p>
+
+                        <div class="mt-auto pt-3 d-flex gap-2">
+
+                            <a asp-action="Details"
+                               asp-route-id="@book.Isbn"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                Details
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@book.Isbn"
+                               class="btn btn-outline-secondary btn-sm flex-fill">
+                                Edit
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@book.Isbn"
+                               class="btn btn-outline-danger btn-sm flex-fill">
+                                Delete
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center mt-4">
+            No books are currently available in the catalogue.
+        </div>
+    }
+
+    <div id="noSearchResults"
+         class="alert alert-warning text-center mt-4 d-none">
+        No matching books found.
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        function filterBooks() {
+            const search = document
+                .getElementById("bookSearch")
+                .value.toLowerCase();
+
+            const cards = document.querySelectorAll(".book-card");
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                const match = text.includes(search);
+
+                card.style.display = match ? "" : "none";
+
+                if (match) visibleCount++;
+            });
+
+            document.getElementById("noSearchResults")
+                .classList.toggle(
+                    "d-none",
+                    visibleCount > 0 || cards.length === 0
+                );
+        }
+    </script>
+}

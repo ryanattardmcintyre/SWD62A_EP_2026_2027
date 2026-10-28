@@ -56,7 +56,7 @@ namespace DataAccess.Context
         //enabling lazy loading
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseLazyLoadingProxies();
         }
         
     }
