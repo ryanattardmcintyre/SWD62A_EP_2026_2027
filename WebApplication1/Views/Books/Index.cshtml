@@ -4,106 +4,301 @@
     ViewData["Title"] = "Books Catalogue";
 }
 
+<style>
+    .catalogue-header {
+        background: linear-gradient(120deg, #172554, #334e87);
+        border-radius: 20px;
+        padding: 32px;
+        color: white;
+        margin-bottom: 30px;
+    }
+
+        .catalogue-header h2 {
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+    .search-panel {
+        background: #fff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.05);
+        margin-bottom: 30px;
+    }
+
+    .book-card {
+        border: 1px solid #edf0f5;
+        border-radius: 18px;
+        overflow: hidden;
+        background: white;
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,.09);
+        }
+
+    .book-cover-area {
+        width: 115px;
+        min-width: 115px;
+        height: 165px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f1f4f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .book-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cover-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(145deg, #dbe5f4, #eef2f9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        text-align: center;
+        padding: 12px;
+    }
+
+        .cover-placeholder .book-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .cover-placeholder small {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+    .book-title {
+        font-size: 1.1rem;
+        font-weight: 750;
+        color: #172554;
+        line-height: 1.35;
+        margin-bottom: 6px;
+    }
+
+    .book-author {
+        font-size: .85rem;
+        color: #64748b;
+    }
+
+    .book-meta {
+        font-size: .8rem;
+        color: #64748b;
+    }
+
+    .category-badge {
+        background: #eef2ff;
+        color: #4338ca;
+        font-size: .72rem;
+        padding: 6px 10px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+
+    .availability-badge {
+        font-size: .72rem;
+        padding: 6px 10px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+
+    .book-actions {
+        border-top: 1px solid #f1f3f6;
+        padding-top: 14px;
+        margin-top: 18px;
+    }
+
+        .book-actions .btn {
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+
+    body {
+        background: #f8fafc;
+    }
+</style>
+
 <div class="container py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Header -->
+    <div class="catalogue-header d-flex flex-wrap
+                justify-content-between align-items-center gap-3">
+
         <div>
-            <h2 class="fw-bold">Books Catalogue</h2>
-            <p class="text-muted">
-                Browse our collection of books
+            <h2 class="mb-2">📚 Books Catalogue</h2>
+            <p class="mb-0 opacity-75">
+                Discover and manage your book collection.
             </p>
         </div>
 
-        <a asp-action="Create" class="btn btn-primary">
+        <a asp-action="Create"
+           class="btn btn-light fw-bold px-4 py-2">
             + Add New Book
         </a>
     </div>
 
     <!-- Search -->
-    <div class="mb-4">
-     
-        <form action="/Books/Search" method="post">
-            <input type="text"
-                   id="bookSearch"
-                   class="form-control"
-                   placeholder="Search books by title, author or ISBN..."
-                   name="keyword" />
-                    <input type="submit" class="btn btn-success" value="Search" />
+    <div class="search-panel">
+        <form asp-controller="Books"
+              asp-action="Search"
+              method="get">
 
+            <div class="input-group">
+                <input type="text"
+                       name="keyword"
+                       class="form-control form-control-lg"
+                       placeholder="Search by title, author or ISBN..."
+                       value="@Context.Request.Query["keyword"]" />
+
+                <button type="submit"
+                        class="btn btn-primary px-4">
+                    Search
+                </button>
+
+                <a asp-controller="Books"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary
+                          d-flex align-items-center">
+                    Clear
+                </a>
+            </div>
         </form>
     </div>
 
-    <!-- Book Cards -->
-    <div class="row g-4" id="booksContainer">
+    <!-- Results -->
+    <div class="d-flex justify-content-between
+                align-items-center mb-3">
+
+        <h5 class="fw-bold mb-0">Explore Books</h5>
+
+        <span class="text-muted small">
+            @Model.Count() books found
+        </span>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4">
 
         @foreach (var book in Model)
         {
-            <div class="col-12 col-md-6 col-lg-4 book-card">
+            <div class="col-12 col-lg-6">
 
-                <div class="card h-100 shadow-sm border-0">
+                <div class="book-card h-100 p-3
+                                d-flex flex-column">
 
-                    <div class="card-body d-flex flex-column">
+                    <div class="d-flex gap-3">
 
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="badge bg-secondary">
-                                @(book.Category?.Name ?? "Uncategorised")
-                            </span>
+                        <!-- Cover Thumbnail -->
+                        <div class="book-cover-area">
+
+                            @if (!string.IsNullOrWhiteSpace(book.Cover))
+                            {
+                                <img src="@book.Cover"
+                                     alt="Cover of @book.Title"
+                                     class="book-cover"
+                                     loading="lazy"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+
+                                <div class="cover-placeholder"
+                                     style="display:none;">
+                                    <div class="book-icon">📖</div>
+                                    <small>No Cover</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cover-placeholder">
+                                    <div class="book-icon">📖</div>
+                                    <small>No Cover</small>
+                                </div>
+                            }
+
+                        </div>
+
+                        <!-- Book Information -->
+                        <div class="flex-grow-1"
+                             style="min-width:0;">
+
+                            <div class="mb-2">
+                                <span class="category-badge">
+                                    @(book.Category?.Name ?? "Uncategorised")
+                                </span>
+                            </div>
+
+                            <h5 class="book-title">
+                                @book.Title
+                            </h5>
+
+                            <div class="book-author mb-3">
+                                By @(book.Author ?? "Unknown Author")
+                            </div>
+
+                            <div class="book-meta mb-1">
+                                <strong>ISBN:</strong> @book.Isbn
+                            </div>
+
+                            <div class="book-meta mb-2">
+                                <strong>Published:</strong>
+                                @book.PublishedYear
+                            </div>
 
                             @if (book.Available)
                             {
-                                <span class="badge bg-success">
-                                    Available
+                                <span class="badge bg-success
+                                                     availability-badge">
+                                    ● Available
                                 </span>
                             }
                             else
                             {
-                                <span class="badge bg-danger">
-                                    Unavailable
+                                <span class="badge bg-danger
+                                                     availability-badge">
+                                    ● Unavailable
                                 </span>
                             }
-                        </div>
-
-                        <h5 class="card-title fw-bold">
-                            @book.Title
-                        </h5>
-
-                        <p class="text-muted mb-2">
-                            By @(book.Author ?? "Unknown Author")
-                        </p>
-
-                        <hr />
-
-                        <p class="mb-2">
-                            <strong>ISBN:</strong> @book.Isbn
-                        </p>
-
-                        <p class="mb-2">
-                            <strong>Published:</strong> @book.PublishedYear
-                        </p>
-
-                        <div class="mt-auto pt-3 d-flex gap-2">
-
-                            <a asp-action="Details"
-                               asp-route-id="@book.Isbn"
-                               class="btn btn-outline-primary btn-sm flex-fill">
-                                Details
-                            </a>
-
-                            <a asp-action="Edit"
-                               asp-route-id="@book.Isbn"
-                               class="btn btn-outline-secondary btn-sm flex-fill">
-                                Edit
-                            </a>
-
-                            <a asp-action="Delete"
-                               asp-route-id="@book.Isbn"
-                               class="btn btn-outline-danger btn-sm flex-fill">
-                                Delete
-                            </a>
 
                         </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="book-actions mt-auto
+                                    d-flex gap-2">
+
+                        <a asp-action="Details"
+                           asp-route-id="@book.Isbn"
+                           class="btn btn-primary flex-fill">
+                            Details
+                        </a>
+
+                        <a asp-action="Edit"
+                           asp-route-id="@book.Isbn"
+                           class="btn btn-outline-secondary flex-fill">
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@book.Isbn"
+                           class="btn btn-outline-danger flex-fill">
+                            Delete
+                        </a>
 
                     </div>
+
                 </div>
             </div>
         }
@@ -112,42 +307,18 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center mt-4">
-            No books are currently available in the catalogue.
+        <div class="text-center py-5">
+            <div style="font-size:55px;">📚</div>
+            <h4 class="fw-bold mt-3">No books found</h4>
+            <p class="text-muted">
+                Try searching for another title or author.
+            </p>
+
+            <a asp-action="Index"
+               class="btn btn-primary">
+                View All Books
+            </a>
         </div>
     }
 
-    <div id="noSearchResults"
-         class="alert alert-warning text-center mt-4 d-none">
-        No matching books found.
-    </div>
-
 </div>
-
-@section Scripts {
-    <script>
-        function filterBooks() {
-            const search = document
-                .getElementById("bookSearch")
-                .value.toLowerCase();
-
-            const cards = document.querySelectorAll(".book-card");
-            let visibleCount = 0;
-
-            cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                const match = text.includes(search);
-
-                card.style.display = match ? "" : "none";
-
-                if (match) visibleCount++;
-            });
-
-            document.getElementById("noSearchResults")
-                .classList.toggle(
-                    "d-none",
-                    visibleCount > 0 || cards.length === 0
-                );
-        }
-    </script>
-}

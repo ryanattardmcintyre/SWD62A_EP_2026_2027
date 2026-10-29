@@ -31,5 +31,7 @@ namespace Common.Models
         //from b in context.Books
         //select b.Isbn, b.Title, b.Category.Name
         public bool Available { get; set; }
+
+        public string Cover { get; set; }
     }
 }

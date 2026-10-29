@@ -12,7 +12,7 @@
 
             <h2 class="mb-4">Add New Book</h2>
 
-            <form action="/Books/Create" method="post">
+            <form action="/Books/Create" method="post" enctype="multipart/form-data">
 
                 <div asp-validation-summary="ModelOnly"
                      class="text-danger mb-3"></div>
@@ -100,6 +100,20 @@
                         Available for borrowing
                     </label>
                 </div>
+
+                <div class="mb-3">
+                    <label
+                           class="form-label">Cover Photo:</label>
+
+                    <input name="file"
+                           class="form-control"
+                           placeholder="Upload a file"
+                           type="file"
+                           />
+
+                    
+                </div>
+
 
                 <!-- Buttons -->
                 <button type="submit" class="btn btn-primary">
