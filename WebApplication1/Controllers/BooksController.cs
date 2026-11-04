@@ -1,6 +1,7 @@
 ﻿using Common.Models;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace WebApplication1.Controllers
 {
@@ -120,6 +121,89 @@ namespace WebApplication1.Controllers
 
         }
 
+
+        [HttpGet]
+        public IActionResult Edit(string id) {
+                var originalBook = _booksRepository.GetBook(id);
+            if (originalBook == null) {
+                TempData["error"] = "Book doesn't exist";
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Categories = _categoriesRepository.GetCategories();
+            return View(originalBook);
+        
+        }
+        [HttpPost]
+        public IActionResult Edit(Book b, IFormFile file, [FromServices] IWebHostEnvironment host)
+        {
+            try
+            {
+                var count = _booksRepository.GetBooks().Where(x => x.Isbn == b.Isbn).Count();
+                if (count == 1)
+                {
+                    if (file != null)
+                    {
+                        //absolutePath is needed to save the physical file
+                        //to get the absolutePath I need a FRAMEWORK SERVICE called IWEBHOSTENVIRONMENT
+
+                        string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+                        string absolutePath = host.WebRootPath + "\\images\\" + filename;
+
+
+                        using (var fsOut = new FileStream(absolutePath, FileMode.CreateNew))
+                        {
+                            using (var f = file.OpenReadStream())
+                            {
+                                f.CopyTo(fsOut);
+                            }
+                        }
+
+                        //relativePath is needed to open & render the image and hence we're saving this
+                        //in the database in the Cover property of Book
+                        string relativePath = "\\images\\" + filename;
+                        b.Cover = relativePath;
+                    }
+
+                    _booksRepository.UpdateBook(b);
+                    ModelState.Clear();
+                    //ViewBag or TempData
+                    TempData["message"] = "Book updated successfully";
+                }
+                else
+                {
+                    TempData["error"] = "Book cannot be edited because it wasn't found";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //log ex into a file or cloud
+                TempData["error"] = "Book was not updated. Check your inputs";
+            }
+
+            ViewBag.Categories = _categoriesRepository.GetCategories();
+            return RedirectToAction("Index");
+
+        }
+
+
+
+        public IActionResult Delete(string id)
+        {
+            if (_booksRepository.GetBook(id) != null)
+            {
+                _booksRepository.DeleteBook(id);
+                TempData["message"] = "Book Deleted";
+            }
+            else
+            {
+                TempData["error"] = "No Book found";
+            }
+
+            return RedirectToAction("Index");
+        }
        
 
     }

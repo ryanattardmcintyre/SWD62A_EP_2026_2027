@@ -285,14 +285,13 @@
                             Details
                         </a>
 
-                        <a asp-action="Edit"
-                           asp-route-id="@book.Isbn"
+                        <a href="/Books/Edit/@book.Isbn"
                            class="btn btn-outline-secondary flex-fill">
                             Edit
                         </a>
 
-                        <a asp-action="Delete"
-                           asp-route-id="@book.Isbn"
+                        <a href="/Books/Delete/@book.Isbn"
+                           onclick="return window.confirm('Are you sure?')"
                            class="btn btn-outline-danger flex-fill">
                             Delete
                         </a>

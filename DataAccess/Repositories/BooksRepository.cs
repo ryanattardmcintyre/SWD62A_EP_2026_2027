@@ -85,5 +85,30 @@ namespace DataAccess.Repositories
         //Delete
         //Update
 
+        public void UpdateBook(Book b)
+        {
+            var originalBook = GetBook(b.Isbn);
+            if(originalBook != null)
+            {
+                originalBook.Author = b.Author;
+                originalBook.Title = b.Title;
+                //...
+
+                originalBook.Cover = b.Cover;
+
+                _context.SaveChanges();
+            }
+        }
+
+        public void DeleteBook(string isbn)
+        {
+            var originalBook = GetBook(isbn);
+            if (originalBook != null)
+            {
+                _context.Books.Remove(originalBook);
+                _context.SaveChanges();
+            }
+        }
+
     }
 }
