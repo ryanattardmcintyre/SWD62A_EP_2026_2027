@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common.Interfaces;
+using Common.Models;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -7,9 +8,9 @@ namespace WebApplication1.Controllers
 {
     public class BooksController : Controller
     {
-        private BooksRepository _booksRepository;
+        private IBooksRepository _booksRepository;
         private CategoriesRepository _categoriesRepository;
-        public BooksController(BooksRepository booksRepository,
+        public BooksController(IBooksRepository booksRepository,
                 CategoriesRepository categoriesRepository)
         {
             _booksRepository = booksRepository;

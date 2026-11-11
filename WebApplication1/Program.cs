@@ -1,3 +1,5 @@
+using Common.Interfaces;
+using Common.Models;
 using DataAccess.Context;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +14,7 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<CustomUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LibraryDbContext>();
 builder.Services.AddControllersWithViews();
 
@@ -20,8 +22,19 @@ builder.Services.AddControllersWithViews();
 //Transient - it creates an instance for every call
 //Singleton - it creates ONE instance for all users/calls/requests
 //Scoped (most commonly used) - it creates ONE instance for every request
-                            //e.g. end-user => /Books/Create => 1) checks whether book exists 2) adds the book
-builder.Services.AddScoped<BooksRepository>();
+//e.g. end-user => /Books/Create => 1) checks whether book exists 2) adds the book
+
+string booksDataSource = builder.Configuration["booksdatasource"].ToString();
+string jsonConnectionString = builder.Configuration["jsonConnectionString"].ToString();
+if (booksDataSource == "db")
+{
+    builder.Services.AddScoped<IBooksRepository, BooksRepository>();
+}
+else
+{
+    builder.Services.AddScoped<IBooksRepository, BooksJsonRepository>(
+        x => new BooksJsonRepository(jsonConnectionString));
+}
 builder.Services.AddScoped<CategoriesRepository>();
 
 var app = builder.Build();

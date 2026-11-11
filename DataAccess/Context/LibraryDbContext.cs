@@ -32,7 +32,7 @@ namespace DataAccess.Context
     //What is the role of this context class?
     //- This is an abstraction of the database
     //- in other words a database represented as a class
-    public class LibraryDbContext: IdentityDbContext<IdentityUser>
+    public class LibraryDbContext: IdentityDbContext<CustomUser>
     {
 
         //package Microsoft.AspNetCore.Identity.FrameworkCore has these models => User, Role, etc.

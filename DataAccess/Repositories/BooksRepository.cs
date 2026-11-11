@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common.Interfaces;
+using Common.Models;
 using DataAccess.Context;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace DataAccess.Repositories
     //way 2: METHOD INJECTION
     //way 3: property injection
     
-    public class BooksRepository
+    public class BooksRepository: IBooksRepository
     {
         private LibraryDbContext _context;
         public BooksRepository(LibraryDbContext context) 
