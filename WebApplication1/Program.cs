@@ -5,6 +5,7 @@ using DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Services.BookingPolicies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,11 @@ else
         x => new BooksJsonRepository(jsonConnectionString));
 }
 builder.Services.AddScoped<CategoriesRepository>();
+builder.Services.AddScoped<ReservationsRepository>();
+
+builder.Services.AddKeyedScoped<IBookingPolicy, SummerBookingPolicy>("summer");
+builder.Services.AddKeyedScoped<IBookingPolicy, WinterBookingPolicy>("winter");
+
 
 var app = builder.Build();
 

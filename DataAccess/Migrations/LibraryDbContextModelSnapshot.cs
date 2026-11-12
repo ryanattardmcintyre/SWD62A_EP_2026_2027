@@ -160,6 +160,9 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(17)");
 
+                    b.Property<DateTime>("DateDue")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DateReturned")
                         .HasColumnType("datetime2");
 

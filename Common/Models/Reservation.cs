@@ -20,6 +20,8 @@ namespace Common.Models
         public DateTime DateTaken { get; set; }
         public DateTime? DateReturned { get; set; }
 
+        public DateTime DateDue { get; set; }
+
         //[ForeignKey("User")];
         public string Username { get; set; } //33FC43FC-4273-41A8-A536-9FB5203D5A71
         //public IdentityUser User {get;set;}
